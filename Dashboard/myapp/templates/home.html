@@ -12,8 +12,8 @@
 <table class="prices">
     <tr>
         <th></th>
-        <td colspan="3">Bids</td>
-        <td colspan="3">Offers</td>
+        <td colspan="3">Back</td>
+        <td colspan="3">Lay</td>
     </tr>
     {% for id, row in users.items() %}
     <tr>
@@ -29,5 +29,8 @@
 </table>
 <p>Bid: bidder is willing to pay this much to back the player</p>
 <p>Offer: offerer would give up their stake in the player if paid this</p>
+<p>Back: backer is willing to pay this much to win £1 if that outcome is true</p>
+<p>Lay: layer is willing to pay £1 to win this much if the outcome is false</p>
+<p>{{prices}}</p>
 </body>
 </html>

@@ -17,6 +17,12 @@ def get_users():
     return {row["id"]: dict(row) for row in rows}
 
 
+def get_prices():
+    db = get_db()
+    rows = db.execute("SELECT id, placed_by, price, outcome_id, backing FROM orders").fetchall()
+    return [dict(row) for row in rows]
+
+
 @main.route('/')
 def index():
     logged_in = session.get('logged_in', 0)
@@ -49,4 +55,4 @@ def home():
     if logged_in == 0:
         return redirect('/')
     users = get_users()
-    return render_template('home.html', users=users, user=users[logged_in])
+    return render_template('home.html', users=users, user=users[logged_in], prices=get_prices())
