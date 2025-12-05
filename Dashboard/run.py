@@ -8,3 +8,9 @@ if __name__ == "__main__":
     print(f'Running on port {port}', flush=True)
     serve(app, host='0.0.0.0', port=port)
     print('Ending LayBack Dashboard App', flush=True)
+
+"""
+TODO: 
+* Users can't lay themself - that would be throwing a game
+
+"""

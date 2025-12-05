@@ -5,6 +5,31 @@
     <title>Title</title>
 </head>
 <body>
-<p>Hi</p>
+<p>Hi. Log in here:</p>
+<form method="post" action="/login">
+    <table class="login">
+        <tr>
+            <th>Username</th>
+            <th><!--Password--></th>
+        </tr>
+        <tr>
+            <td>
+                <select name="user_id">
+                    <option selected value="0">-</option>
+                    {% for id, user in users.items() %}
+                    <option value="{{id}}">{{id}}: {{user['name']}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Go">
+            </td>
+        </tr>
+    </table>
+</form>
+
 </body>
 </html>
