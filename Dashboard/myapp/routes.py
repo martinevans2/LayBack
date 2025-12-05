@@ -49,4 +49,4 @@ def home():
     if logged_in == 0:
         return redirect('/')
     users = get_users()
-    return render_template('home.html', logged_in=users[logged_in])
+    return render_template('home.html', users=users, user=users[logged_in])

@@ -1,0 +1,10 @@
+.prices td
+{
+  border: 1px solid gray;
+  width: 40px;
+  text-align: center;
+}
+.prices th
+{
+  text-align: left;
+}

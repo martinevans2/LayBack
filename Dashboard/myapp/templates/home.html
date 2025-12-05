@@ -2,10 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Title</title>
 </head>
 <body>
-<p>Home page. User is {{logged_in['id']}}: {{logged_in['name']}}.</p>
+<p>Home page. User is {{user['id']}}: {{user['name']}}.</p>
 <a href="logout">Log out</a>
+<h2>Unmatched bets</h2>
+<table class="prices">
+    <tr>
+        <th></th>
+        <td colspan="3">Bids</td>
+        <td colspan="3">Offers</td>
+    </tr>
+    {% for id, row in users.items() %}
+    <tr>
+        <th>{{row['name']}}</th>
+        <td>5</td>
+        <td>6</td>
+        <td>7</td>
+        <td>8</td>
+        <td>9</td>
+        <td>9.5</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>Bid: bidder is willing to pay this much to back the player</p>
+<p>Offer: offerer would give up their stake in the player if paid this</p>
 </body>
 </html>
