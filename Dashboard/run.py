@@ -11,6 +11,6 @@ if __name__ == "__main__":
 
 """
 TODO: 
-* Users can't lay themself - that would be throwing a game
+* Can't place an order that crosses the book? Or can, and it clicks?
 
 """

@@ -21,7 +21,9 @@ def get_users():
 
 def get_prices():
     db = get_db()
-    rows = db.execute("SELECT id, placed_by, price, outcome_id, backing FROM orders").fetchall()
+    rows = db.execute("""
+    SELECT id, placed_by, price, outcome_id, backing FROM orders WHERE matched_to IS NULL
+    """).fetchall()
     return [dict(row) for row in rows]
 
 
@@ -68,7 +70,7 @@ def home():
     if logged_user is None:
         return redirect('/')
 
-    prices = get_prices()
+    prices = sorted(get_prices(), key=itemgetter('outcome_id'))
     by_outcome = {k: extract_display_prices(list(group)) for k, group in groupby(prices, itemgetter('outcome_id'))}
     own_orders = [p for p in prices if p['placed_by'] == logged_in]
     return render_template('home.html', users=users, user=logged_user, prices=by_outcome,
@@ -77,14 +79,16 @@ def home():
 
 @main.route('/neworder', methods=['POST'])
 def neworder():
-    placed_by = int(request.form['placed_by'])
+    logged_in = session.get('logged_in', 0)
+    if logged_in == 0:
+        return redirect('/')
     outcome_id = int(request.form['outcome_id'])
     backing = int(request.form['backing'])
     price = int(float(request.form['price']) * 100)
-    values = (placed_by, outcome_id, backing, price)
+    values = (logged_in, outcome_id, backing, price)
 
     # Checks
-    if placed_by == outcome_id and backing == 0:
+    if logged_in == outcome_id and backing == 0:
         return redirect('/home')  # Cannot lay yourself
 
     # Place order
@@ -97,9 +101,32 @@ def neworder():
 
 @main.route('/delete', methods=['GET'])
 def delete_order():
+    logged_in = session.get('logged_in', 0)
+    if logged_in == 0:
+        return redirect('/')
     order_id = int(request.values['id'])
     db = get_db()
     cursor = db.cursor()
     cursor.execute("DELETE FROM orders WHERE id = ?", (order_id,))
     db.commit()
     return redirect('/home')
+
+
+@main.route('/match', methods=['GET'])
+def match():
+    logged_in = session.get('logged_in', 0)
+    if logged_in == 0:
+        return redirect('/')
+    order_id = int(request.values['id'])
+    db = get_db()
+    row = db.execute("""
+        SELECT matched_to FROM orders WHERE id = ?
+        """, (order_id,)).fetchone()
+    if row['matched_to'] is not None:
+        return redirect('/home')
+    cursor = db.cursor()
+    cursor.execute("UPDATE orders SET matched_to = ? WHERE id = ? ", (logged_in, order_id))
+    db.commit()
+    return redirect('/home')
+
+

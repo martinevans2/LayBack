@@ -23,20 +23,29 @@
     <tr>
         <th>{{row['name']}}</th>
         {% if row['id'] in prices %}
+        {% set price_row = prices[row['id']] %}
         {% for col in [2,1,0] %}
-        {% if prices[row['id']]['backs'] | length > col %}
-        <td class="own_order_{{prices[row['id']]['backs'][col]['placed_by'] == user['id']}} back">{{
-            prices[row['id']]['backs'][col]['price'] | currency
-        }}</td>
+        {% if price_row['backs'] | length > col %}
+        <td class="own_order_{{price_row['backs'][col]['placed_by'] == user['id']}} back">
+            {% if col == 0 and price_row['backs'][col]['placed_by'] != user['id'] %}
+            <a href="/match?id={{price_row['backs'][col]['id']}}">{{price_row['backs'][col]['price'] | currency}}</a>
+            {% else %}
+            {{price_row['backs'][col]['price'] | currency}}
+            {% endif %}
+        </td>
         {% else %}
         <td class="no_price"></td>
         {% endif %}
         {% endfor %}
         {% for col in range(3) %}
-        {% if prices[row['id']]['lays'] | length > col %}
-        <td class="own_order_{{prices[row['id']]['lays'][col]['placed_by'] == user['id']}} lay">{{
-            prices[row['id']]['lays'][col]['price'] | currency
-        }}</td>
+        {% if price_row['lays'] | length > col %}
+        <td class="own_order_{{price_row['lays'][col]['placed_by'] == user['id']}} lay">
+            {% if col == 0 and price_row['lays'][col]['placed_by'] != user['id'] %}
+            <a href="/match?id={{price_row['lays'][col]['id']}}">{{price_row['lays'][col]['price'] | currency}}</a>
+            {% else %}
+            {{price_row['lays'][col]['price'] | currency}}
+            {% endif %}
+        </td>
         {% else %}
         <td class="no_price"></td>
         {% endif %}
@@ -51,26 +60,25 @@
 </table>
 <h2>Place an unmatched bet (fish)</h2>
 <form class="fishing" action="/neworder" method="POST">
-    <input type="hidden" name="placed_by" value="{{user['id']}}">
     <table>
         <tr>
-            <th>Player</th>
             <th>Side</th>
+            <th>Player</th>
             <th>Price</th>
         </tr>
         <tr>
+            <td>
+                <select name="backing">
+                    <option value="1">Back</option>
+                    <option value="0">Lay</option>
+                </select>
+            </td>
             <td>
                 <select name="outcome_id">
                     <option selected>-</option>
         {% for row in users %}
                     <option value="{{row['id']}}">{{row['name']}}</option>
         {% endfor %}
-                </select>
-            </td>
-            <td>
-                <select name="backing">
-                    <option value="1">Back</option>
-                    <option value="0">Lay</option>
                 </select>
             </td>
             <td>

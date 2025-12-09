@@ -8,6 +8,11 @@
 {
   text-align: left;
 }
+.prices a
+{
+  text-decoration: none;
+  color: black;
+}
 .fishing input
 {
   width: 80px;
