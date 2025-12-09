@@ -1,10 +1,26 @@
 .prices td
 {
   border: 1px solid gray;
-  width: 40px;
+  width: 50px;
   text-align: center;
 }
 .prices th
 {
   text-align: left;
+}
+.fishing input
+{
+  width: 80px;
+}
+.own_order_True
+{
+  background-color: LightGreen;
+}
+.own_order_False.back
+{
+  background-color: LightBlue;
+}
+.own_order_False.lay
+{
+  background-color: LightPink;
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Title</title>
+    <title>Log in</title>
 </head>
 <body>
 <p>Hi. Log in here:</p>
@@ -17,8 +17,8 @@
             <td>
                 <select name="user_id">
                     <option selected value="0">-</option>
-                    {% for id, user in users.items() %}
-                    <option value="{{id}}">{{id}}: {{user['name']}}</option>
+                    {% for user in users %}
+                    <option value="{{user['id']}}">{{user['name']}}</option>
                     {% endfor %}
                 </select>
             </td>

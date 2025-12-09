@@ -7,30 +7,91 @@
 </head>
 <body>
 <p>Home page. User is {{user['id']}}: {{user['name']}}.</p>
-<a href="logout">Log out</a>
-<h2>Unmatched bets</h2>
+<p><a href="logout">Log out</a></p>
+
+<p>Back: backer is willing to pay this much to win £1 if that outcome is true</p>
+<p>Lay: layer is willing to pay £1 to win this much if the outcome is false</p>
+
+<h2>Match an existing bet (click)</h2>
 <table class="prices">
     <tr>
         <th></th>
         <td colspan="3">Back</td>
         <td colspan="3">Lay</td>
     </tr>
-    {% for id, row in users.items() %}
+    {% for row in users %}
     <tr>
         <th>{{row['name']}}</th>
-        <td>5</td>
-        <td>6</td>
-        <td>7</td>
-        <td>8</td>
-        <td>9</td>
-        <td>9.5</td>
+        {% if row['id'] in prices %}
+        {% for col in [2,1,0] %}
+        {% if prices[row['id']]['backs'] | length > col %}
+        <td class="own_order_{{prices[row['id']]['backs'][col]['placed_by'] == user['id']}} back">{{
+            prices[row['id']]['backs'][col]['price'] | currency
+        }}</td>
+        {% else %}
+        <td class="no_price"></td>
+        {% endif %}
+        {% endfor %}
+        {% for col in range(3) %}
+        {% if prices[row['id']]['lays'] | length > col %}
+        <td class="own_order_{{prices[row['id']]['lays'][col]['placed_by'] == user['id']}} lay">{{
+            prices[row['id']]['lays'][col]['price'] | currency
+        }}</td>
+        {% else %}
+        <td class="no_price"></td>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        {% for _ in range(6) %}
+        <td class="no_price"></td>
+        {% endfor %}
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
-<p>Bid: bidder is willing to pay this much to back the player</p>
-<p>Offer: offerer would give up their stake in the player if paid this</p>
-<p>Back: backer is willing to pay this much to win £1 if that outcome is true</p>
-<p>Lay: layer is willing to pay £1 to win this much if the outcome is false</p>
-<p>{{prices}}</p>
+<h2>Place an unmatched bet (fish)</h2>
+<form class="fishing" action="/neworder" method="POST">
+    <input type="hidden" name="placed_by" value="{{user['id']}}">
+    <table>
+        <tr>
+            <th>Player</th>
+            <th>Side</th>
+            <th>Price</th>
+        </tr>
+        <tr>
+            <td>
+                <select name="outcome_id">
+                    <option selected>-</option>
+        {% for row in users %}
+                    <option value="{{row['id']}}">{{row['name']}}</option>
+        {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="backing">
+                    <option value="1">Back</option>
+                    <option value="0">Lay</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" name="price" placeholder="price" min="0.1" step="0.1">
+            </td>
+            <td>
+                <input type="submit" value="Submit">
+            </td>
+        </tr>
+    </table>
+</form>
+<h2>Delete unmatched bets</h2>
+{% if own_orders | length > 0 %}
+<ul>
+{% for order in own_orders %}
+    <li><a href="/delete?id={{order['id']}}">[X]</a> {{'Backing' if order['backing'] == 1 else 'Laying'}} {{
+        users_by_id[order['outcome_id']]['name']}} at {{order['price'] | currency}}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None</p>
+{% endif %}
 </body>
 </html>
